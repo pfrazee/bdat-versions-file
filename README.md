@@ -1,17 +1,15 @@
 # bdat-versions-file
 
+This API parses, modifies, and serializes version history files for bdat archives.
 Used by https://github.com/pfraze/bdat and https://github.com/pfraze/beaker, with the [dat network](https://github.com/maxogden/dat).
 
-This API reads and writes a semver history for dat archives to a file.
-By default, that filename is `.bdat-versions`.
+## Format
 
 The file is a newline separated list, where each row takes the following form:
 
 ```
 {semver} {change_num} {hex_hash}
 ```
-
-**TODO: put an example file here**
 
 ## Example usage
 
