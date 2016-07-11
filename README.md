@@ -11,7 +11,11 @@ The file is a newline separated list, where each row takes the following form:
 {semver} {change_num} {hex_hash}
 ```
 
-Example file:
+Example file.
+This represents an archive with a single file.
+The version was bumped 4 times in a row, without changes to the archive.
+The change number and hash refer to the feed state 1 entry prior to the "version commit."
+Therefore, the block containing the "2.0.0" commit is block 5.
 
 ```
 1.0.0 1 8648d0ba5cc6fecce82a95ae141a6af0a8b7a5aaf1e94a0204af54e8fe127c2b
