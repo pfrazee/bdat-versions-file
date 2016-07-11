@@ -11,6 +11,15 @@ The file is a newline separated list, where each row takes the following form:
 {semver} {change_num} {hex_hash}
 ```
 
+Example file:
+
+```
+1.0.0 1 8648d0ba5cc6fecce82a95ae141a6af0a8b7a5aaf1e94a0204af54e8fe127c2b
+1.0.1 2 18521e2d9483915c496a6f3772ee7297e770a7114901080c06bbafb57298e0b7
+1.1.0 3 4d82539a292ec2c564abe7f8e8225f6b9b08c8169a7642438f46cfccff0cf060
+2.0.0 4 40f978f34bee809b53b38611327ed2129ab3a41f081dc67d7b91c001a41415f8
+```
+
 ## Example usage
 
 ```js
