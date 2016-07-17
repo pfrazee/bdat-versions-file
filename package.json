@@ -1,6 +1,6 @@
 {
   "name": "bdat-versions-file",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "File containing the semver history of a dat archive.",
   "main": "index.js",
   "scripts": {
