@@ -28,66 +28,79 @@ Therefore, the block containing the "2.0.0" commit is block 5.
 
 ```js
 // read and parse
-var vfilePath = __dirname + '.bdat-versions'
-var vfileData = require('fs').readFileSync(vfilePath, 'utf-8')
-var vfile     = require('bdat-versions-file').parse(vfileData)
+var vfilePath = __dirname + '.bdat/versions.json.log'
+require('fs').readFileSync(vfilePath, 'utf-8')
+  .pipe(require('bdat-versions-file').fromStream((err, vfile) => {
+    // examine the log
+    console.log(vfile.index) // => ['1.0.2', '1.0.1', '1.0.1']
+    console.log(vfile.current) // => '1.0.2'
+    console.log(vfile.log) /* => {
+      '1.0.2': { version: '1.0.2', change: 54, hash: '...', date: 1468788049441, message: '...' },
+      '1.0.1': { version: '1.0.1', change: 38, hash: '...', date: 1468788047173, message: '...' },
+      '1.0.0': { version: '1.0.0', change: 12, hash: '...', date: 1468787947166, message: '...' }
+    }*/
 
-// examine the log
-console.log(vfile.versions) // => ['1.0.2', '1.0.1', '1.0.1']
-console.log(vfile.current) // => '1.0.2'
-console.log(vfile.log) /* => {
-  '1.0.2': { change: 54, hash: '...' },
-  '1.0.1': { change: 38, hash: '...' },
-  '1.0.0': { change: 12, hash: '...' }
-}*/
+    // add a new version
+    // (most recent change and hash should be retrieved from the containing hyperdrive)
+    vfile.append({ version: '2.0.0', change: 71, hash: '...', message: 'Sprockets now come in blue' })
+    // also supported:
+    // vfile.append({ version: 'major', ... }) - bump major
+    // vfile.append({ version: 'minor', ... }) - bump minor
+    // vfile.append({ version: 'patch', ... }) - bump patch
+    // vfile.append({ version: 'prerelease', ... }) - bump prerelease
 
-// add a new version
-vfile.append('2.0.0', newChangeNum, newHash)
-// also supported:
-// vfile.append('major', ...) - bump major
-// vfile.append('minor', ...) - bump minor
-// vfile.append('patch', ...) - bump patch
-// vfile.append('prerelease', ...) - bump prerelease
-
-// write to disk
-var newVfileData = vfile.toString()
-require('fs').writeFileSync(vfilePath, newVfileData, 'utf-8')
+    // write to disk
+    require('fs').writeFileSync(vfilePath, vfile.toString(), 'utf-8')
+  }))
 ```
+
+## V2 Changes
+
+Version 2.0.0 breaks fully from 1.0.0.
+The encoding is switched from custom to JSON-stream, new log-fields are added, and the API is changed.
 
 ## API
 
-### .parse(str)
+### .parse(str, cb)
 
-Parses the string-content of a file, and returns a `vfile` object.
-Returns an empty or partially-complete vfile if it finds parse errors.
+Parses the content of a JSON-stream-encoded string, and provides a `vfile` object.
+
+### .fromStream(cb)
+
+Parses the content of a JSON-stream-encoded stream, and provides a `vfile` object.
+Returns a writable stream.
 
 ### .create()
 
 Creates a new, empty `vfile` object.
 The `vfile.current` value will be false.
 
-### vfile.append(version, changeNum, hash)
+### vfile.append({ version, change, hash, date, message })
 
 Adds a new entry to the log.
-`version` may be a valid semantic version, or one of `major`, `minor`, `patch`, `prerelease`.
-Throws if `version` is invalid.
+ - `version` optional string. May be a valid semantic version, or one of `major`, `minor`, `patch`, `prerelease`. Throws if `version` is invalid.
+ - `change` required number. The change-number of the most recent hyperdrive metadata block.
+ - `hash` required hex-encoded string. The hash of the most recent hyperdrive metadata block.
+ - `date` optional number, defaults to now.
+ - `message` optional string.
 
 ### vfile.toString()
 
 Serializes the vfile to a string.
 
-### vfile.versions
+### vfile.index
 
-Ordered list of all semvers in the file.
+Ordered list of all entries in the file.
 
 ### vfile.current
 
 The current semver.
+If no semvers have been published, this will be false.
 
 ### vfile.log
 
 A map of the semvers to change numbers and hashes.
 
 ```
-vfile.log['1.0.0'] // => { change: Number, hash: String }
+vfile.log['1.0.0'] // => { version: String, change: Number, hash: String, date: Number, message: String }
 ```

@@ -22,7 +22,9 @@
   },
   "homepage": "https://github.com/pfraze/bdat-versions-file#readme",
   "dependencies": {
-    "semver": "^5.2.0"
+    "json-stream": "^1.0.0",
+    "semver": "^5.2.0",
+    "string-to-stream": "^1.1.0"
   },
   "devDependencies": {
     "tape": "^4.6.0"
